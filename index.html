@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>FP問題集 2級・1級</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ホーム画面 -->
+<div id="screen-home" class="screen active">
+  <div class="home-wrap">
+    <div class="home-hero">
+      <div class="hero-badge">FP</div>
+      <h1 class="hero-title">FP問題集</h1>
+      <p class="hero-sub">2級・1級 対策アプリ</p>
+    </div>
+    <div class="home-grade-btns">
+      <button class="grade-btn grade-2" onclick="App.startQuiz('2kyu')">
+        <div class="grade-num">2<span>級</span></div>
+        <div class="grade-desc">ファイナンシャル・プランニング技能士</div>
+        <div class="grade-info" id="info-2kyu">読み込み中...</div>
+      </button>
+      <button class="grade-btn grade-1" onclick="App.startQuiz('1kyu')">
+        <div class="grade-num">1<span>級</span></div>
+        <div class="grade-desc">ファイナンシャル・プランニング技能士</div>
+        <div class="grade-info" id="info-1kyu">読み込み中...</div>
+      </button>
+    </div>
+    <button class="list-open-btn" onclick="App.showList()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg>
+      問題一覧・学習履歴を見る
+    </button>
+  </div>
+</div>
+
+<!-- クイズ画面 -->
+<div id="screen-quiz" class="screen">
+  <div class="top-bar">
+    <button class="icon-btn" onclick="App.confirmHome()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <span class="bar-grade" id="quiz-grade-label"></span>
+    <span class="bar-progress" id="quiz-progress"></span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="quiz-body">
+    <div class="q-meta-row">
+      <span class="cat-tag" id="q-category"></span>
+      <span class="q-num" id="q-num"></span>
+    </div>
+    <div class="q-text" id="q-text"></div>
+    <div class="choices-list" id="choices"></div>
+  </div>
+</div>
+
+<!-- 結果画面 -->
+<div id="screen-result" class="screen">
+  <div class="top-bar">
+    <button class="icon-btn" onclick="App.goHome()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <span class="bar-grade" id="result-grade-label"></span>
+    <span class="session-score" id="session-score"></span>
+  </div>
+  <div class="result-body">
+    <div class="judge-area" id="judge-area"></div>
+    <div class="result-q-text" id="result-q-text"></div>
+    <div class="result-choices" id="result-choices"></div>
+    <div class="explanation-card">
+      <div class="exp-header">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        解説
+      </div>
+      <div class="exp-text" id="exp-text"></div>
+      <a class="ref-btn" id="ref-btn" href="#" target="_blank" rel="noopener noreferrer">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        <span id="ref-text"></span>
+      </a>
+    </div>
+  </div>
+  <div class="result-footer">
+    <button class="btn-next" onclick="App.nextQuestion()">次の問題へ　→</button>
+    <button class="btn-end" onclick="App.goHome()">終了する</button>
+  </div>
+</div>
+
+<!-- 問題一覧画面 -->
+<div id="screen-list" class="screen">
+  <div class="top-bar">
+    <button class="icon-btn" onclick="App.goHome()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <span class="bar-title">問題一覧・学習履歴</span>
+  </div>
+  <div class="list-wrap">
+    <div class="grade-tabs">
+      <button class="g-tab active" id="tab-2kyu" onclick="App.switchListGrade('2kyu')">2級</button>
+      <button class="g-tab" id="tab-1kyu" onclick="App.switchListGrade('1kyu')">1級</button>
+    </div>
+    <div class="stats-area" id="stats-area"></div>
+    <div class="filter-row">
+      <select id="filter-cat" onchange="App.applyFilters()">
+        <option value="all">すべての分野</option>
+        <option value="ライフプランニング">ライフプランニング</option>
+        <option value="リスク管理">リスク管理</option>
+        <option value="金融資産運用">金融資産運用</option>
+        <option value="タックスプランニング">タックスプランニング</option>
+        <option value="不動産">不動産</option>
+        <option value="相続・事業承継">相続・事業承継</option>
+      </select>
+      <select id="filter-status" onchange="App.applyFilters()">
+        <option value="all">すべて</option>
+        <option value="wrong">間違えた問題</option>
+        <option value="correct">正解した問題</option>
+        <option value="unanswered">未回答</option>
+      </select>
+    </div>
+    <div class="practice-btn-wrap" id="practice-btn-wrap" style="display:none">
+      <button class="btn-practice" id="btn-practice" onclick="App.startFilteredPractice()">この問題を練習する</button>
+    </div>
+    <div class="q-list" id="q-list"></div>
+  </div>
+</div>
+
+<!-- 確認ダイアログ -->
+<div id="overlay" class="overlay" onclick="App.closeDialog()" style="display:none"></div>
+<div id="dialog" class="dialog" style="display:none">
+  <div class="dialog-title">練習を終了しますか？</div>
+  <div class="dialog-msg">回答履歴は保存されています。</div>
+  <div class="dialog-btns">
+    <button class="d-btn-cancel" onclick="App.closeDialog()">続ける</button>
+    <button class="d-btn-ok" onclick="App.goHome()">終了する</button>
+  </div>
+</div>
+
+<script src="js/data/questions-2kyu.js"></script>
+<script src="js/data/questions-1kyu.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
